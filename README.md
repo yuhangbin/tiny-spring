@@ -2,8 +2,12 @@
 
 ## Purpose
 1. Learning how to use dynamics proxy in correct way.
-2. More know about Spring Core Technologies.
-3. Learning designs in Spring framework.
+2. Learning how spring IoC works.
+
+## Key Points
+- [ ] Resource Management 
+- [ ] Bean Definition Management
+- [ ] Bean initialize
 
 ## The IoC Container
 ### Objects
@@ -16,9 +20,12 @@
 ## AOP
 
 ### Questions
-Q1. How to combine with IoC Container? \
-A1. Implementing Hooks (BeanPostProcessor), return Proxy after initialize.
+Q1. How AOP works in IoC Container? \
+A1. The IoC Container support the hook (BeanPostProcessor) which you can use any process you want when initial beans.
+    So you can use AOP before bean initialize aware some custom logic.
 
+Q2. How to manage Resources? 
+A2. 
 ### Objects
     1. dynamic proxy
     2. Implementing BeanPostProcessor
