@@ -5,4 +5,8 @@ package com.yu.spring.aop;
  * @date 2022/5/3
  **/
 public interface AopProxy {
+
+	Object getProxy();
+
+	Class<?> getProxyClass();
 }
