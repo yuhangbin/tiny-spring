@@ -5,6 +5,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'application'
 }
 
 repositories {
@@ -18,12 +19,20 @@ dependencies {
     implementation 'cglib:cglib:3.2.12'
     implementation 'org.aspectj:aspectjrt:1.8.9'
     implementation 'org.aspectj:aspectjweaver:1.8.9'
+    
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 group = 'com.yu'
 version = '1.0-SNAPSHOT'
 description = 'tiny-spring'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
+
+application {
+    mainClass = 'com.yu.spring.example.SpringExample'
+}
 
 publishing {
     publications {
@@ -31,4 +40,8 @@ publishing {
             from(components.java)
         }
     }
+}
+
+test {
+    useJUnitPlatform()
 }
