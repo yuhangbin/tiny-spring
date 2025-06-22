@@ -48,6 +48,11 @@ public class UnderstandingExercises {
         System.out.println("Exercise 6: Singleton vs Prototype");
         exercise6_BeanScopes();
         System.out.println();
+
+        // Exercise 7: Detailed Prototype Behavior
+        System.out.println("Exercise 7: Detailed Prototype Behavior");
+        exercise7_DetailedPrototypeBehavior();
+        System.out.println();
     }
 
     /**
@@ -182,6 +187,61 @@ public class UnderstandingExercises {
         System.out.println("Prototype beans same instance? " + (prototype1 == prototype2));
     }
 
+    /**
+     * Exercise 7: Detailed prototype behavior
+     * - How prototype beans are created each time
+     * - Lifecycle differences between singleton and prototype
+     * - When BeanPostProcessor is called for prototypes
+     */
+    private static void exercise7_DetailedPrototypeBehavior() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+        // Add a post processor to see when it's called
+        beanFactory.addBeanPostProcessor(new DetailedLoggingBeanPostProcessor());
+
+        // Create singleton bean with init method
+        BeanDefinition singletonDef = new BeanDefinition(DetailedService.class);
+        singletonDef.setScope("singleton");
+        singletonDef.setInitMethodName("initialize");
+        beanFactory.registerBeanDefinition("singletonService", singletonDef);
+
+        // Create prototype bean with init method
+        BeanDefinition prototypeDef = new BeanDefinition(DetailedService.class);
+        prototypeDef.setScope("prototype");
+        prototypeDef.setInitMethodName("initialize");
+        beanFactory.registerBeanDefinition("prototypeService", prototypeDef);
+
+        System.out.println("=== Singleton Bean Behavior ===");
+        System.out.println("1. Getting singleton bean first time:");
+        DetailedService singleton1 = (DetailedService) beanFactory.getBean("singletonService");
+        System.out.println("   Singleton ID: " + singleton1.getId());
+
+        System.out.println("2. Getting singleton bean second time:");
+        DetailedService singleton2 = (DetailedService) beanFactory.getBean("singletonService");
+        System.out.println("   Singleton ID: " + singleton2.getId());
+        System.out.println("   Same instance? " + (singleton1 == singleton2));
+
+        System.out.println("\n=== Prototype Bean Behavior ===");
+        System.out.println("1. Getting prototype bean first time:");
+        DetailedService prototype1 = (DetailedService) beanFactory.getBean("prototypeService");
+        System.out.println("   Prototype ID: " + prototype1.getId());
+
+        System.out.println("2. Getting prototype bean second time:");
+        DetailedService prototype2 = (DetailedService) beanFactory.getBean("prototypeService");
+        System.out.println("   Prototype ID: " + prototype2.getId());
+        System.out.println("   Same instance? " + (prototype1 == prototype2));
+
+        System.out.println("3. Getting prototype bean third time:");
+        DetailedService prototype3 = (DetailedService) beanFactory.getBean("prototypeService");
+        System.out.println("   Prototype ID: " + prototype3.getId());
+
+        System.out.println("\n=== Key Differences ===");
+        System.out.println("- Singleton: Created once, cached, same instance returned");
+        System.out.println("- Prototype: Created new instance every time getBean() is called");
+        System.out.println("- BeanPostProcessor: Called for every prototype instance");
+        System.out.println("- Init method: Called for every prototype instance");
+    }
+
     // Test classes for exercises
 
     public static class UserService implements UserServiceInterface {
@@ -214,6 +274,30 @@ public class UnderstandingExercises {
         }
     }
 
+    public static class DetailedService {
+        private static int counter = 0;
+        private final int id;
+        private String state = "uninitialized";
+
+        public DetailedService() {
+            this.id = ++counter;
+            System.out.println("   Creating DetailedService instance #" + id);
+        }
+
+        public void initialize() {
+            System.out.println("   Initializing DetailedService #" + id);
+            this.state = "initialized";
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getState() {
+            return state;
+        }
+    }
+
     public static class LoggingBeanPostProcessor implements BeanPostProcessor {
         @Override
         public Object postProcessBeforeInitialization(Object bean, String beanName) {
@@ -226,6 +310,30 @@ public class UnderstandingExercises {
             System.out.println("   After initialization: " + beanName);
             if (bean instanceof UserService) {
                 ((UserService) bean).setMessage("Modified by BeanPostProcessor");
+            }
+            return bean;
+        }
+    }
+
+    public static class DetailedLoggingBeanPostProcessor implements BeanPostProcessor {
+        @Override
+        public Object postProcessBeforeInitialization(Object bean, String beanName) {
+            if (bean instanceof DetailedService) {
+                System.out.println(
+                        "   Before initialization: " + beanName + " (ID: " + ((DetailedService) bean).getId() + ")");
+            } else {
+                System.out.println("   Before initialization: " + beanName);
+            }
+            return bean;
+        }
+
+        @Override
+        public Object postProcessAfterInitialization(Object bean, String beanName) {
+            if (bean instanceof DetailedService) {
+                System.out.println(
+                        "   After initialization: " + beanName + " (ID: " + ((DetailedService) bean).getId() + ")");
+            } else {
+                System.out.println("   After initialization: " + beanName);
             }
             return bean;
         }

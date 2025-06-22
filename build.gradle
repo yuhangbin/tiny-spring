@@ -27,11 +27,11 @@ dependencies {
 group = 'com.yu'
 version = '1.0-SNAPSHOT'
 description = 'tiny-spring'
-java.sourceCompatibility = JavaVersion.VERSION_11
-java.targetCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
 
 application {
-    mainClass = 'com.yu.spring.example.SpringExample'
+    mainClass = 'com.yu.spring.learning.JdkProxyMechanism'
 }
 
 publishing {
